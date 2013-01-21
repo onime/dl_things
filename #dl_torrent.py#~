@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-#Telecharge les torrents a partir d'eztv.it
+#Télécharge les torrents a partir d'eztv.it
 
 from lxml import etree
 import os
@@ -27,8 +27,6 @@ def get_list_shows():
    infos = tree_xml.parse("//info")
 
    for i in infos:
-       name=i.attrib["name"]
-       print(name)
        
    
     
