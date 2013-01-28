@@ -4,15 +4,39 @@
 
 from lxml import etree
 from urllib.request import urlretrieve
+import socket
 import re
 import os
 import sys
+import notify2
 
-file_rss = "http://feeds.feedburner.com/mstream"
-basename = "http://mangastream.com/"
-parserXML = etree.XMLParser(ns_clean=True, recover=True,encoding='utf-8')
-parserHTML = etree.HTMLParser()
+def get_list_scans():
+    port = 2345
+    host = "192.168.0.101"
+    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    sock.connect((host,port))
+    
+    sock.sendall(b"last_seen -d -w\n")
+    xml = sock.recv(4096).decode('utf-8')
+    
+    while re.search('\n',xml) == None:
+        xml +=sock.recv(4096).decode('utf-8')
 
+    sock.close()
+    print(xml)
+    xml = xml.replace('\n','')
+    root_xml = etree.fromstring(xml)
+    infos = root_xml.xpath("//info")
+    list_show = []
+
+    for i in infos:
+        print(i.attrib["name"])
+        i.attrib["name"] = i.attrib["name"].replace("."," ")
+        if i.attrib["type"] == "MANGA":
+            print(i.attrib["type"])
+            list_show.append([i.attrib["name"],i.attrib["num_chap"]])
+
+    return list_show
 
 def get_links_scan(link_scan):
 
@@ -74,6 +98,14 @@ def dl_images_of_a_scan(list_url,path_dirs):
 #On la télécharge 
         urlretrieve(link_img,path_file,hook_retrieve)
 
+list = get_list_scans()
+print(list)
+exit(0)
+file_rss = "http://feeds.feedburner.com/mstream"
+basename = "http://mangastream.com/"
+parserXML = etree.XMLParser(ns_clean=True, recover=True,encoding='utf-8')
+parserHTML = etree.HTMLParser()
+
 list_scan = ["Naruto","One Piece","Bleach","Fairy Tail","Claymore"]
 
 #parse le fichier xml
@@ -105,4 +137,8 @@ for i in items:
 
 #On télécharge les images des liens qu'on a récup
             dl_images_of_a_scan(list_link_scan,path_dirs)
-
+            
+            notify2.init("Scans Téléchargé")
+            notif = notify2.Notification(name_scan)
+            notif.show()
+            
