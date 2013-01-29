@@ -44,19 +44,23 @@ for i in items:
 
                 m = re.search(re_nseason_nep,n.text,re.IGNORECASE) 
                 if m != None:
-                    (num_season_cur,num_episode_cur) = parse_regex(m)
 
-                    if int(num_episode_cur) > s[3] and re.search("720p",n.text,re.IGNORECASE) == None:
+                    (num_season_cur,num_episode_cur) = parse_regex(m)
+                    
+                    if  (int(num_season_cur) > s[1] or
+                    (int(num_season_cur) == s[1] and int(num_episode_cur) > s[2]) and
+                    (re.search("720p",n.text,re.IGNORECASE)) == None):
                         
                         name_file = name_dir_show+".S"+num_season_cur+"E"+num_episode_cur+".torrent"
                         path_torrent = path_dir+name_file
 
                         urlretrieve(links_torrents[count].attrib["href"],path_torrent)
+                       
                         notify2.init("Torrent Téléchargé")
                         notif = notify2.Notification(name_file)
                         notif.show()
                         
-                    elif int(num_episode_cur) <= s[3]:
+                    elif int(num_season_cur) < s[1] or (int(num_season_cur) == s[1] and int(num_episode_cur)) <= s[2]:
                         break;
            
                 count+=1
