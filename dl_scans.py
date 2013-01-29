@@ -56,7 +56,7 @@ file_rss = "http://feeds.feedburner.com/mstream"
 basename = "http://mangastream.com/"
 parserXML = etree.XMLParser(ns_clean=True, recover=True,encoding='utf-8')
 parserHTML = etree.HTMLParser()
-path_dirs = "/media/Data/test_scan/"
+path_dirs = "/media/Data/Scans/"
 
 #parse le fichier xml
 tree = etree.parse(file_rss,parserXML)
