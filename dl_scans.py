@@ -38,10 +38,10 @@ def dl_images_of_a_scan(list_url,path_dirs):
 
         link_img = img[0].attrib["src"]
 
-#On définit le bon path avec la bonne extension        
+#On définit le bon path avec la bonne extension    
         name_page = format_number_zero([count])[0] + os.path.splitext(link_img)[1]
         path_file = path_dirs+"/"+ name_page
-        
+                
 #On la télécharge 
         urlretrieve(link_img,path_file)
         sys.stdout.write(name_page+" ")
@@ -75,7 +75,7 @@ for i in items:
             num_scan_dl = search_scan.group(2)            
             link_scan = childs[1].text
                 
-            path_dirs_scan = path_dirs+name_dir_scan
+            path_dirs_scan = path_dirs+name_dir_scan+"/"+num_scan_dl+"/"
                 
             if not os.path.exists(path_dirs_scan):
                 os.makedirs(path_dirs_scan)
@@ -85,7 +85,7 @@ for i in items:
 
             sys.stdout.write(" Downlading "+name_dir_scan+" "+num_scan_dl+" "+str(len(list_link_scan))+" pages ")
 #On télécharge les images des liens qu'on a récup
-            dl_images_of_a_scan(list_link_scan,path_dirs)
+            dl_images_of_a_scan(list_link_scan,path_dirs_scan)
             
             notify2.init("Scans Téléchargé")
             notif = notify2.Notification(name_dir_scan+" "+num_scan_dl+" "+str(len(list_link_scan))+" pages")
