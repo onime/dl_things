@@ -11,7 +11,7 @@ import os
 #opener = build_opener()
 #opener.addheaders = [('User-agent', 'Mozilla/5.0')]
 
-list_shows = infos_last_dl("SHOW"," ")
+list_shows = infos_last("SHOW"," ","DL")
 path_shows = "/media/Data/Shows/"
 #récupérer liste des sous-titre qu'on a besoin
 
@@ -28,18 +28,18 @@ for dir_show in dirs_show:
                 
                 last_sub.append([show[0],show[1],int(str_ep_sub),dir_show])
 
-print(last_sub)
-exit(0)
 base_addicted = "http://www.addic7ed.com/"
 tree_addicted = etree.parse(base_addicted+"shows.php",parserHTML)
 
 list_link_shows = tree_addicted.xpath("//td[@class='version']")
 
-for ligne_show in list_link_shows:
-    link_show = ligne_show.getchildren()[0].getchildren()[1].attrib["href"]
-    name_show = ligne_show.getchildren()[0].getchildren()[1].text
+for show in last_sub:
 
-    for show in last_sub:
+    for ligne_show in list_link_shows:
+        link_show = ligne_show.getchildren()[0].getchildren()[1].attrib["href"]
+        name_show = ligne_show.getchildren()[0].getchildren()[1].text
+
+
     
         if re.search(show[0],name_show,re.IGNORECASE):
             last_num_season = show[1]
