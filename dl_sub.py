@@ -64,17 +64,17 @@ for show in last_sub:
                  
                 if  (re.search("^Complete",is_complete,re.IGNORECASE) and re.search("^LOL|EVOLVE|ASAP|WEB-DL",version) and
                      re.search("French",lang,re.IGNORECASE) and int(num_episode_line) > int(last_num_episode)):
-                    
+
                     if str(num_episode_line) not in list_download_sub.keys():
                         list_download_sub[int(num_episode_line)] = link_srt
-
+                      
             for k in list_download_sub.keys():
                 
                 path_dl_sub = show[-1]+"/Saison."+str(last_num_season)+"/"
                 if not os.path.exists(path_dl_sub):
                     os.makedirs(path_dl_sub)
-                
-                req = Request(base_addicted+link_srt)
+                                
+                req = Request(base_addicted+list_download_sub[k])
                 req.add_header('referer', base_addicted+link_show)
                 r = urlopen(req)
                 content_srt = r.read().decode("iso-8859-1")
