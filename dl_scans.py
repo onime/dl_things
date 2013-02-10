@@ -5,11 +5,10 @@
 from lxml import etree
 from urllib.request import urlretrieve
 from easylast import *
-import socket
 import re
 import os
-import sys
 import notify2
+import subprocess
 
 def get_links_scan(link_scan):
 
@@ -44,8 +43,6 @@ def dl_images_of_a_scan(list_url,path_dirs):
                 
 #On la télécharge 
         urlretrieve(link_img,path_file)
-        sys.stdout.write(name_page+" ")
-        sys.stdout.flush()
         count+=1
 
     print("")
@@ -61,6 +58,7 @@ path_dirs = "/media/Data/Scans/"
 #parse le fichier xml
 tree = etree.parse(file_rss,parserXML)
 items = tree.xpath('//item')
+hash_scan = {} 
 
 for i in items:
     childs = i.getchildren()  
@@ -74,24 +72,32 @@ for i in items:
             
             if int(num_scan_dl) > int(name_scan[1]):
                 
-                print(name_scan[0]+" "+str(num_scan_dl)+" "+str(name_scan[1]))            
-
                 name_dir_scan = format_name(name_scan[0],' ')
                 link_scan = childs[1].text
                 
                 path_dirs_scan = path_dirs+name_dir_scan+"/"+num_scan_dl+"/"
-                
+
+                if name_dir_scan not in hash_scan.keys():
+                    hash_scan[name_dir_scan] = []
+
+                hash_scan[name_dir_scan].append(num_scan_dl)
+                            
                 if not os.path.exists(path_dirs_scan):
                     os.makedirs(path_dirs_scan)
 
 #On récupère les pages du scans                        
-#                list_link_scan = get_links_scan(link_scan)
+                list_link_scan = get_links_scan(link_scan)
 
-#                sys.stdout.write(" Downlading "+name_dir_scan+" "+num_scan_dl+" "+str(len(list_link_scan))+" pages ")
+                print(" Downlading "+name_dir_scan+" "+num_scan_dl+" "+str(len(list_link_scan))+" pages ")
 #On télécharge les images des liens qu'on a récup
-#                dl_images_of_a_scan(list_link_scan,path_dirs_scan)
+                dl_images_of_a_scan(list_link_scan,path_dirs_scan)
                 
                 notify2.init("Scans Téléchargé")
-#                notif = notify2.Notification(name_dir_scan+" "+num_scan_dl+" "+str(len(list_link_scan))+" pages")
-#                notif.show()
-            
+                notif = notify2.Notification(name_dir_scan+" "+num_scan_dl+" "+str(len(list_link_scan))+" pages")
+                notif.show()
+                
+for k in hash_scan:
+    hash_scan[k] = sorted(hash_scan[k])
+    print("maj")
+    for num in hash_scan[k]:
+        subprocess.getoutput("/usr/local/bin/client_last -u "+k+" -n "+num)

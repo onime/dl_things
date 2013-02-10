@@ -23,7 +23,7 @@ def usage():
 
 args = sys.argv[1:]
 try:
-    optlist,value = getopt(args, 'a:x:u:n:i:prs',['DL','VU'])  
+    optlist,value = getopt(args, 'a:x:u:n:i:hprs',['DL','VU'])  
 except GetoptError as err:
     print(err)
     usage()
@@ -41,6 +41,10 @@ if "-a" in args or "-a" in args:
         sys.exit(2)
 
 for i,o in enumerate(optlist):
+    if o[0] == "-h":
+        usage()
+        exit(0)
+
     if o[0] == "-r":
         file_dump = open("/home/yosholo/.config/utils/dump_bd_last_seen."+bd,"r")
         lines = file_dump.readlines()
@@ -77,7 +81,7 @@ for i,o in enumerate(optlist):
         print(infos_last("MANGA",".",bd))
         exit(0)
     if o[0] == "-a":
-        num = parse_regex(re.search(re_nseason_nep,optlist[i+1][1],re.IGNORECASE))
+        num = parse_regex(re.search(regex_infos,optlist[i+1][1],re.IGNORECASE))
         print(o[1])
         if len(num) > 1: 
             add_show(o[1],num[0],num[1],bd)
@@ -85,7 +89,7 @@ for i,o in enumerate(optlist):
             add_manga(o[1],num[0],bd)
         exit(0)
     if o[0] == "-u":
-        num = parse_regex(re.search(re_nseason_nep,optlist[i+1][1],re.IGNORECASE))
+        num = parse_regex(re.search(regex_infos,optlist[i+1][1],re.IGNORECASE))
         if len(num) > 1: 
             upd_last_show(o[1],num[0],num[1],bd)
         else:
