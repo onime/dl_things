@@ -1,4 +1,5 @@
-easylast
+dl_things
 ========
 
-python module to easy read config file with last information about show and manga
+Collections of scripts to dl last shows mangas or subtitles
+to update the last dl things it use the script client_last who use the module easylast
