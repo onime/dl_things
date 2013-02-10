@@ -42,18 +42,18 @@ if "-a" in args or "-a" in args:
 
 for i,o in enumerate(optlist):
     if o[0] == "-r":
-        file_dump = open("/home/yosholo/.config/utils/dump_bd_last_seen","r")
+        file_dump = open("/home/yosholo/.config/utils/dump_bd_last_seen."+bd,"r")
         lines = file_dump.readlines()
         for line in lines:
             elem = line.split(",")
-            if elem[1] == 0:
+            if int(elem[1]) == 0:
                 add_show(elem[0],elem[2],elem[3],bd)
             else:
                 add_manga(elem[0],elem[1],bd)
-        file_dump.close()
+            file_dump.close()
         exit(0)
     if o[0] == "-s":
-        file_dump = open("/home/yosholo/.config/utils/dump_bd_last_seen","w")
+        file_dump = open("/home/yosholo/.config/utils/dump_bd_last_seen."+bd,"w")
         infos=infos_last("*",".",bd)
         new_str = []
         for i in infos:
@@ -70,10 +70,15 @@ for i,o in enumerate(optlist):
         suppr_info(o[1],bd)
         exit(0)
     if o[0] == "-p":
-        print(infos_last("*",".",bd))
+        print(bd)
+        print("--"*5)
+        print(infos_last("SHOW",".",bd))
+        print("--"*5)
+        print(infos_last("MANGA",".",bd))
         exit(0)
     if o[0] == "-a":
         num = parse_regex(re.search(re_nseason_nep,optlist[i+1][1],re.IGNORECASE))
+        print(o[1])
         if len(num) > 1: 
             add_show(o[1],num[0],num[1],bd)
         else:

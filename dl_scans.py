@@ -51,7 +51,7 @@ def dl_images_of_a_scan(list_url,path_dirs):
     print("")
 
 
-list_scan = infos_last_dl("MANGA"," ")
+list_scan = infos_last("MANGA"," ","DL")
 file_rss = "http://feeds.feedburner.com/mstream"
 basename = "http://mangastream.com/"
 parserXML = etree.XMLParser(ns_clean=True, recover=True,encoding='utf-8')
@@ -68,26 +68,30 @@ for i in items:
 
 #Parmi les mangas présent on ne prend que ceux présent dans la liste
     for name_scan in list_scan:
-        search_scan = re.search("("+name_scan[0]+").*([0-9]{3})",title,re.IGNORECASE)
-        if search_scan and int(search_scan.group(2)) > name_scan[1]:
+        if re.search("("+name_scan[0]+")",title,re.IGNORECASE):
+            num_scan_dl = parse_regex(re.search(regex_infos,title,re.IGNORECASE))[0]
+              
             
-            name_dir_scan = format_name(name_scan[0],' ')
-            num_scan_dl = search_scan.group(2)            
-            link_scan = childs[1].text
+            if int(num_scan_dl) > int(name_scan[1]):
                 
-            path_dirs_scan = path_dirs+name_dir_scan+"/"+num_scan_dl+"/"
+                print(name_scan[0]+" "+str(num_scan_dl)+" "+str(name_scan[1]))            
+
+                name_dir_scan = format_name(name_scan[0],' ')
+                link_scan = childs[1].text
                 
-            if not os.path.exists(path_dirs_scan):
-                os.makedirs(path_dirs_scan)
+                path_dirs_scan = path_dirs+name_dir_scan+"/"+num_scan_dl+"/"
+                
+                if not os.path.exists(path_dirs_scan):
+                    os.makedirs(path_dirs_scan)
 
 #On récupère les pages du scans                        
-            list_link_scan = get_links_scan(link_scan)
+#                list_link_scan = get_links_scan(link_scan)
 
-            sys.stdout.write(" Downlading "+name_dir_scan+" "+num_scan_dl+" "+str(len(list_link_scan))+" pages ")
+#                sys.stdout.write(" Downlading "+name_dir_scan+" "+num_scan_dl+" "+str(len(list_link_scan))+" pages ")
 #On télécharge les images des liens qu'on a récup
-            dl_images_of_a_scan(list_link_scan,path_dirs_scan)
-            
-            notify2.init("Scans Téléchargé")
-            notif = notify2.Notification(name_dir_scan+" "+num_scan_dl+" "+str(len(list_link_scan))+" pages")
-            notif.show()
+#                dl_images_of_a_scan(list_link_scan,path_dirs_scan)
+                
+                notify2.init("Scans Téléchargé")
+#                notif = notify2.Notification(name_dir_scan+" "+num_scan_dl+" "+str(len(list_link_scan))+" pages")
+#                notif.show()
             
