@@ -10,6 +10,14 @@ import socket
 from urllib.request import urlopen
 import notify2
 from easylast import *
+import subprocess
+
+def try_parse():
+    try:
+        tree_rss = etree.parse(file_rss,parserHTML)
+        return tree_rss
+    except:
+        return False
 
 path_dir = "/home/yosholo/.config/utils/torrent_file/"
 if not os.path.exists(path_dir):
@@ -21,11 +29,20 @@ file_rss = "http://eztv.it/showlist/"
 base_url = "http://eztv.it"
 
 parserHTML =  etree.HTMLParser( recover=True,encoding='utf-8')
-tree_rss = etree.parse(file_rss,parserHTML)
+
+tree_rss = try_parse()
+
+if tree_rss == False:
+    exit(0)
+
+print("Parsed")
+    
 items = tree_rss.xpath("//a[@class='thread_link']")
 
 for i in items:
+
     for s in list_shows:
+      
         if re.search(s[0],i.text,re.IGNORECASE):
             
             name_dir_show = format_name(s[0],' ')
@@ -39,7 +56,9 @@ for i in items:
             
             #on parcour la liste des épisodes
             count = 0
-
+           
+            maj = True            
+          
             for n in names_episodes:
 
                 m = re.search(regex_infos,n.text,re.IGNORECASE) 
@@ -55,7 +74,10 @@ for i in items:
                         path_torrent = path_dir+name_file
                         
                         urlretrieve(links_torrents[count].attrib["href"],path_torrent)
-                       
+                        
+                        if maj == True:
+                            maj == False
+                            subprocess.getoutput("/usr/local/bin/client_last -u "+name_dir_show+" -n "+num_season_cur+"x"+num_episode_cur)
                         notify2.init("Torrent Téléchargé")
                         notif = notify2.Notification(name_file)
                         notif.show()
