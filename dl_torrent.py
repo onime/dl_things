@@ -75,7 +75,7 @@ for i in items:
                         path_torrent = path_dir+name_file
                         
                         print(unquote(links_torrents[count].attrib["href"]))
-                        urlretrieve(links_torrents[count].attrib["href"],"here.torrent")
+                        urlretrieve(links_torrents[count].attrib["href"],path_torrent)
                         
  #                       if maj == True:
   #                          maj == False
