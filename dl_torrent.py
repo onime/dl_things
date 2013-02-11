@@ -8,6 +8,7 @@ import os
 import re
 import socket
 from urllib.request import urlopen
+from urllib.parse import unquote
 import notify2
 from easylast import *
 import subprocess
@@ -52,7 +53,7 @@ for i in items:
             
             tree_ep_show = etree.parse(str(base_url+link_ep_show),parserHTML)
             names_episodes = tree_ep_show.xpath("//a[@class='epinfo']")
-            links_torrents = tree_ep_show.xpath("//a[@class='download_2']")
+            links_torrents = tree_ep_show.xpath("//a[@class='download_1']")
             
             #on parcour la liste des épisodes
             count = 0
@@ -73,11 +74,12 @@ for i in items:
                         name_file = name_dir_show+".S"+num_season_cur+"E"+num_episode_cur+".torrent"
                         path_torrent = path_dir+name_file
                         
-                        urlretrieve(links_torrents[count].attrib["href"],path_torrent)
+                        print(unquote(links_torrents[count].attrib["href"]))
+                        urlretrieve(links_torrents[count].attrib["href"],"here.torrent")
                         
-                        if maj == True:
-                            maj == False
-                            subprocess.getoutput("/usr/local/bin/client_last -u "+name_dir_show+" -n "+num_season_cur+"x"+num_episode_cur)
+ #                       if maj == True:
+  #                          maj == False
+   #                         subprocess.getoutput("/usr/local/bin/client_last -u "+name_dir_show+" -n "+num_season_cur+"x"+num_episode_cur)
                         notify2.init("Torrent Téléchargé")
                         notif = notify2.Notification(name_file)
                         notif.show()
