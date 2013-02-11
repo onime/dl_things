@@ -51,7 +51,7 @@ def dl_images_of_a_scan(list_url,path_dirs):
 list_scan = infos_last("MANGA"," ","DL")
 file_rss = "http://feeds.feedburner.com/mstream"
 basename = "http://mangastream.com/"
-parserXML = etree.XMLParser(ns_clean=True, recover=True,encoding='utf-8')
+parserXML = etree.XMLParser(ns_clean=True, recover=True,encoding='iso-8859-1')
 parserHTML = etree.HTMLParser()
 path_dirs = "/media/Data/Scans/"
 
