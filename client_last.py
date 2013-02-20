@@ -2,6 +2,7 @@
 
 #client pour le serveur last_seen
 
+import shutil
 from easylast import *
 from getopt import *
 import sys
@@ -58,7 +59,11 @@ for i,o in enumerate(optlist):
         exit(0)
     if o[0] == "-s":
         file_dump = open("/home/yosholo/.config/utils/dump_bd_last_seen."+bd,"w")
-        infos=infos_last("*",".",bd)
+        infos=infos_last("*","MANGA",bd)
+        new_str = []
+        for i in infos:
+            new_str.append(",".join([str(x) for x in i]))
+        infos=infos_last("*","SHOW",bd)
         new_str = []
         for i in infos:
             new_str.append(",".join([str(x) for x in i]))

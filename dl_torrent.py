@@ -77,9 +77,9 @@ for i in items:
                         print(unquote(links_torrents[count].attrib["href"]))
                         urlretrieve(links_torrents[count].attrib["href"],path_torrent)
                         
- #                       if maj == True:
-  #                          maj == False
-   #                         subprocess.getoutput("/usr/local/bin/client_last -u "+name_dir_show+" -n "+num_season_cur+"x"+num_episode_cur)
+                        if maj == True:
+                            maj == False
+                            subprocess.getoutput("/usr/local/bin/client_last -u "+name_dir_show+" -n "+num_season_cur+"x"+num_episode_cur)
                         notify2.init("Torrent Téléchargé")
                         notif = notify2.Notification(name_file)
                         notif.show()
