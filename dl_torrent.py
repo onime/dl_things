@@ -13,12 +13,7 @@ import notify2
 from easylast import *
 import subprocess
 
-def try_parse():
-    try:
-        tree_rss = etree.parse(file_rss,parserHTML)
-        return tree_rss
-    except:
-        return False
+
 
 path_dir = "/home/yosholo/.config/utils/torrent_file/"
 if not os.path.exists(path_dir):
@@ -28,15 +23,7 @@ list_shows = infos_last("SHOW"," ","DL")
 
 file_rss = "http://eztv.it/showlist/"
 base_url = "http://eztv.it"
-
-parserHTML =  etree.HTMLParser( recover=True,encoding='utf-8')
-
-tree_rss = try_parse()
-
-if tree_rss == False:
-    exit(0)
-
-print("Parsed")
+tree_rss = parse_url(file_rss)
     
 items = tree_rss.xpath("//a[@class='thread_link']")
 
@@ -51,7 +38,7 @@ for i in items:
             #page de la liste des épisodes de la série
             link_ep_show = i.attrib["href"]
             
-            tree_ep_show = etree.parse(str(base_url+link_ep_show),parserHTML)
+            tree_ep_show = parse_url(str(base_url+link_ep_show))
             names_episodes = tree_ep_show.xpath("//a[@class='epinfo']")
             links_torrents = tree_ep_show.xpath("//a[@class='download_1']")
             

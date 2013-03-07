@@ -8,13 +8,10 @@ from urllib.request import *
 import glob
 import os
 
-#opener = build_opener()
-#opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-
 list_shows = infos_last("SHOW"," ","DL")
 path_shows = "/media/Data/Shows/"
-#récupérer liste des sous-titre qu'on a besoin
 
+#Trouve les derniers sous-titre téléchargé
 dirs_show = glob.glob(path_shows+"*")
 last_sub = []
 
@@ -29,8 +26,7 @@ for dir_show in dirs_show:
                 last_sub.append([show[0],show[1],int(str_ep_sub),dir_show])
 
 base_addicted = "http://www.addic7ed.com/"
-tree_addicted = etree.parse(base_addicted+"shows.php",parserHTML)
-
+tree_addicted = parse_url(base_addicted+"shows.php")
 list_link_shows = tree_addicted.xpath("//td[@class='version']")
 
 for show in last_sub:
@@ -39,13 +35,11 @@ for show in last_sub:
         link_show = ligne_show.getchildren()[0].getchildren()[1].attrib["href"]
         name_show = ligne_show.getchildren()[0].getchildren()[1].text
 
-
-    
         if re.search(show[0],name_show,re.IGNORECASE):
             last_num_season = show[1]
             last_num_episode = show[2]
 
-            tree_show = etree.parse(base_addicted+link_show,parserHTML)
+            tree_show = parse_url(base_addicted+link_show)
             list_episode = tree_show.xpath("//tr[@class='epeven completed']")
             
             cur_num_episode = 1
@@ -73,7 +67,9 @@ for show in last_sub:
                 path_dl_sub = show[-1]+"/Saison."+str(last_num_season)+"/"
                 if not os.path.exists(path_dl_sub):
                     os.makedirs(path_dl_sub)
-                                
+                
+                #On utilise le referer parce que addic7ed n'accepte les téléchargements que des connections qui viennent
+                # d'addic7ed
                 req = Request(base_addicted+list_download_sub[k])
                 req.add_header('referer', base_addicted+link_show)
                 r = urlopen(req)
@@ -102,5 +98,4 @@ for show_tvsub in list_link_shows:
             print(name_show_tvsub + "  "+link_show_tvsub)
         
             tree_show = etree.parse(base_tvsub+link_show_tvsub)
-            print("trte")
-exit(0)
+            

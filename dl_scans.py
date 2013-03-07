@@ -13,7 +13,7 @@ import subprocess
 def get_links_scan(link_scan):
 
 #On parse une page d'un scan pour récupérer les liens de toutes les pages du scan
-    tree_page_princ = etree.parse(link_scan,parserHTML)
+    tree_page_princ = parse_url(link_scan)
     id_controls = tree_page_princ.xpath("//div[@id='controls']")
     
     childs= id_controls[0].getchildren()
@@ -32,7 +32,7 @@ def dl_images_of_a_scan(list_url,path_dirs):
     for u in list_url:
 
 #On parse chaque lien pour récupérer l'adresse de l'image
-        tree_page_img = etree.parse(u,parserHTML)
+        tree_page_img = parse_url(u)
         img = tree_page_img.xpath("//img[@id='p']")
 
         link_img = img[0].attrib["src"]
@@ -51,12 +51,11 @@ def dl_images_of_a_scan(list_url,path_dirs):
 list_scan = infos_last("MANGA"," ","DL")
 file_rss = "http://feeds.feedburner.com/mstream"
 basename = "http://mangastream.com/"
-parserXML = etree.XMLParser(ns_clean=True, recover=True,encoding='iso-8859-1')
-parserHTML = etree.HTMLParser()
+
 path_dirs = "/media/Data/Scans/"
 
 #parse le fichier xml
-tree = etree.parse(file_rss,parserXML)
+tree = parse_url(file_rss,"xml")
 items = tree.xpath('//item')
 hash_scan = {} 
 
@@ -68,8 +67,7 @@ for i in items:
     for name_scan in list_scan:
         if re.search("("+name_scan[0]+")",title,re.IGNORECASE):
             num_scan_dl = parse_regex(re.search(regex_infos,title,re.IGNORECASE))[0]
-              
-            
+                          
             if int(num_scan_dl) > int(name_scan[1]):
                 
                 name_dir_scan = format_name(name_scan[0],' ')
