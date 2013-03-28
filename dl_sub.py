@@ -18,12 +18,12 @@ last_sub = []
 for dir_show in dirs_show:
     if os.path.isdir(dir_show):
         for show in list_shows:
-            if re.search(show[0].replace(" ","."),dir_show,re.IGNORECASE):
-                list_srt = sorted([x.lower() for x in glob.glob(dir_show+"/Saison."+str(show[1])+"/*.srt")])
+            if re.search(show["name"].replace(" ","."),dir_show,re.IGNORECASE):
+                list_srt = sorted([x.lower() for x in glob.glob(dir_show+"/Saison."+str(show["num"]["season"])+"/*.srt")])
                 
                 str_ep_sub = re.match(".*S[0-9]+E([0-9]+)\.",list_srt[-1],re.IGNORECASE).group(1)
                 
-                last_sub.append([show[0],show[1],int(str_ep_sub),dir_show])
+                last_sub.append([show["name"],show["num"]["season"],int(str_ep_sub),dir_show])
 
 base_addicted = "http://www.addic7ed.com/"
 tree_addicted = parse_url(base_addicted+"shows.php")

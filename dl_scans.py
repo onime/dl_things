@@ -64,13 +64,13 @@ for i in items:
     title = childs[0].text
 
 #Parmi les mangas présent on ne prend que ceux présent dans la liste
-    for name_scan in list_scan:
-        if re.search("("+name_scan[0]+")",title,re.IGNORECASE):
+    for info_scan in list_scan:
+        if re.search("("+info_scan["name"]+")",title,re.IGNORECASE):
             num_scan_dl = parse_regex(re.search(regex_infos,title,re.IGNORECASE))[0]
                           
-            if int(num_scan_dl) > int(name_scan[1]):
+            if int(num_scan_dl) > int(info_scan["num"]["chap"]):
                 
-                name_dir_scan = format_name(name_scan[0],' ')
+                name_dir_scan = format_name(info_scan["name"],' ')
                 link_scan = childs[1].text
                 
                 path_dirs_scan = path_dirs+name_dir_scan+"/"+num_scan_dl+"/"

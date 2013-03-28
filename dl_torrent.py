@@ -13,8 +13,6 @@ import notify2
 from easylast import *
 import subprocess
 
-
-
 path_dir = "/home/yosholo/.config/utils/torrent_file/"
 if not os.path.exists(path_dir):
     os.makedirs(path_dir)
@@ -27,13 +25,14 @@ tree_rss = parse_url(file_rss)
     
 items = tree_rss.xpath("//a[@class='thread_link']")
 
+
 for i in items:
 
     for s in list_shows:
       
-        if re.search(s[0],i.text,re.IGNORECASE):
+        if re.search(s["name"],i.text,re.IGNORECASE):
             
-            name_dir_show = format_name(s[0],' ')
+            name_dir_show = format_name(s["name"],' ')
 
             #page de la liste des épisodes de la série
             link_ep_show = i.attrib["href"]
@@ -53,11 +52,12 @@ for i in items:
                 if m != None:
 
                     (num_season_cur,num_episode_cur) = parse_regex(m)
+                    hash_num_cur = {"season":int(num_season_cur),"episode":int(num_episode_cur)}
                     
-                    if  (int(num_season_cur) > int(s[1]) or
-                    (int(num_season_cur) == int(s[1]) and int(num_episode_cur) > int(s[2])) and
-                    (re.search("720p",n.text,re.IGNORECASE)) == None):
-                        
+                    # if the current show is more recent than the last dl
+                    res_cmp = cmp_num(hash_num_cur,s["num"],"SHOW") 
+                    if  res_cmp > 1 and (re.search("720p",n.text,re.IGNORECASE)) == None:
+                
                         name_file = name_dir_show+".S"+num_season_cur+"E"+num_episode_cur+".torrent"
                         path_torrent = path_dir+name_file
                         
@@ -70,8 +70,8 @@ for i in items:
                         notify2.init("Torrent Téléchargé")
                         notif = notify2.Notification(name_file)
                         notif.show()
-                        
-                    elif int(num_season_cur) < int(s[1]) or (int(num_season_cur) == int(s[1]) and int(num_episode_cur)) <= int(s[2]):
+                    #if he is not more recent we break and not see the rest    
+                    elif res_cmp <= 0:
                         break;
            
                 count+=1

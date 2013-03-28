@@ -87,7 +87,7 @@ for i,o in enumerate(optlist):
         exit(0)
     if o[0] == "-a":
         num = parse_regex(re.search(regex_infos,optlist[i+1][1],re.IGNORECASE))
-        print(o[1])
+
         if len(num) > 1: 
             add_show(o[1],num[0],num[1],bd)
         else:
