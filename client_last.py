@@ -95,10 +95,14 @@ for i,o in enumerate(optlist):
         exit(0)
     if o[0] == "-u":
         num = parse_regex(re.search(regex_infos,optlist[i+1][1],re.IGNORECASE))
-        if len(num) > 1: 
-            upd_last_show(o[1],num[0],num[1],bd)
+        hash_num = {}
+        if len(num) > 1:
+            hash_num["season"]=num[0]
+            hash_num["episode"]=num[1]
+
         else:
-            upd_last_manga(o[1],num[0],bd)
+            hash_num["chap"] = num[0]
+        upd_last(o[1],hash_num,bd)
         exit(0)
 
 
