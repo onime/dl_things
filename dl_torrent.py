@@ -29,9 +29,9 @@ items = tree_rss.xpath("//a[@class='thread_link']")
 for i in items:
 
     for s in list_shows:
-      
+        
         if re.search(s["name"],i.text,re.IGNORECASE):
-            
+           
             name_dir_show = format_name(s["name"],' ')
 
             #page de la liste des épisodes de la série
@@ -45,20 +45,19 @@ for i in items:
             count = 0
            
             maj = True            
-          
+            print(s["name"])
             for n in names_episodes:
 
                 m = re.search(regex_infos,n.text,re.IGNORECASE) 
                 if m != None:
 
-                    (num_season_cur,num_episode_cur) = parse_regex(m)
-                    hash_num_cur = {"season":int(num_season_cur),"episode":int(num_episode_cur)}
+                    num_cur = parse_regex(m)
                     
                     # if the current show is more recent than the last dl
-                    res_cmp = cmp_num(hash_num_cur,s["num"],"SHOW") 
-                    if  res_cmp > 1 and (re.search("720p",n.text,re.IGNORECASE)) == None:
+                    res_cmp = cmp_num(num_cur,s["num"],"SHOW")
+                    if  res_cmp > 0 and (re.search("720p",n.text,re.IGNORECASE)) == None:
                 
-                        name_file = name_dir_show+".S"+num_season_cur+"E"+num_episode_cur+".torrent"
+                        name_file = name_dir_show+"."+format_SXXEXX(num_cur)+".torrent"
                         path_torrent = path_dir+name_file
                         
                         print(unquote(links_torrents[count].attrib["href"]))
@@ -66,7 +65,7 @@ for i in items:
                         
                         if maj == True:
                             maj == False
-                            upd_last(name_dir_show,{"season":num_seasoncur,"episode":num_episode_cur},"DL")
+                            upd_last(name_dir_show,num_cur,"DL")
 
                         notify2.init("Torrent Téléchargé")
                         notif = notify2.Notification(name_file)

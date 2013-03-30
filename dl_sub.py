@@ -20,10 +20,13 @@ for dir_show in dirs_show:
         for show in list_shows:
             if re.search(show["name"].replace(" ","."),dir_show,re.IGNORECASE):
                 list_srt = sorted([x.lower() for x in glob.glob(dir_show+"/Saison."+str(show["num"]["season"])+"/*.srt")])
-                
-                str_ep_sub = re.match(".*S[0-9]+E([0-9]+)\.",list_srt[-1],re.IGNORECASE).group(1)
-                
-                last_sub.append([show["name"],show["num"]["season"],int(str_ep_sub),dir_show])
+                if list_srt:
+                    str_ep_sub = re.match(".*S[0-9]+E([0-9]+)\.",list_srt[-1],re.IGNORECASE).group(1)
+                    last_sub.append([show["name"],show["num"]["season"],int(str_ep_sub),dir_show])
+                else:
+                    last_sub.append([show["name"],show["num"]["season"]+1,1,dir_show])
+                    
+print(last_sub)
 
 base_addicted = "http://www.addic7ed.com/"
 tree_addicted = parse_url(base_addicted+"shows.php")
@@ -34,7 +37,7 @@ for show in last_sub:
     for ligne_show in list_link_shows:
         link_show = ligne_show.getchildren()[0].getchildren()[1].attrib["href"]
         name_show = ligne_show.getchildren()[0].getchildren()[1].text
-
+       
         if re.search(show[0],name_show,re.IGNORECASE):
             last_num_season = show[1]
             last_num_episode = show[2]
@@ -47,7 +50,7 @@ for show in last_sub:
 
             for episode in list_episode:
                 infos = episode.getchildren()
-
+           
                 cur_num_season = str(infos[0].text)
                 num_episode_line = str(infos[1].text)
                 lang = str(infos[3].text)
@@ -55,13 +58,13 @@ for show in last_sub:
                 version = str(infos[4].text)
                 link_srt = infos[9].getchildren()[0].attrib["href"]
                 
-                 
                 if  (re.search("^Complete",is_complete,re.IGNORECASE) and re.search("^LOL|EVOLVE|ASAP|WEB-DL",version) and
                      re.search("French",lang,re.IGNORECASE) and int(num_episode_line) > int(last_num_episode)):
-
+                    print(link_srt)
                     if str(num_episode_line) not in list_download_sub.keys():
+
                         list_download_sub[int(num_episode_line)] = link_srt
-                      
+                     
             for k in list_download_sub.keys():
                 
                 path_dl_sub = show[-1]+"/Saison."+str(last_num_season)+"/"
@@ -70,32 +73,15 @@ for show in last_sub:
                 
                 #On utilise le referer parce que addic7ed n'accepte les téléchargements que des connections qui viennent
                 # d'addic7ed
+
                 req = Request(base_addicted+list_download_sub[k])
                 req.add_header('referer', base_addicted+link_show)
                 r = urlopen(req)
                 content_srt = r.read().decode("iso-8859-1")
                 
-                path_dl_sub +=format_name(name_show," ")+".S"+format_number_zero([last_num_season])[0]+"E"+format_number_zero([k])[0]+".srt"
+                path_dl_sub +=format_name(name_show," ")+"."+format_SXXEXX({"season":last_num_season,"episode":k})+".srt"
                 file_srt = open(path_dl_sub,"w",encoding = "iso-8859-1")
                 file_srt.write(content_srt)
                 file_srt.close()
-                print(path_dl_sub)
-                            
-          
-exit(0)  
-#On tvsubtitles
-base_tvsub = "http://fr.tvsubtitles.net/"
-tree_tvsub = etree.parse(base_tvsub+"tvshows.html",parserHTML)
-list_link_shows = tree_tvsub.xpath("//td[@align='left']")
+                print(path_dl_sub)                              
 
-for show_tvsub in list_link_shows:
-    name_show_tvsub = show_tvsub.getchildren()[0].getchildren()[0].text
-    link_show_tvsub = show_tvsub.getchildren()[0].attrib["href"]
-
-    for show in last_sub:
-        if re.search(show[0],name_show_tvsub,re.IGNORECASE):
-            
-            print(name_show_tvsub + "  "+link_show_tvsub)
-        
-            tree_show = etree.parse(base_tvsub+link_show_tvsub)
-            

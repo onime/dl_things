@@ -82,17 +82,13 @@ for i,o in enumerate(optlist):
         exit(0)
   
     if o[0] == "-n":
-        hash_num = {}
-        num = parse_regex(re.search(regex_infos,optlist[i][1],re.IGNORECASE))
-        if len(num) > 1:
-            print("fuck")
+        hash_num = parse_regex(re.search(regex_infos,optlist[i][1],re.IGNORECASE))
+        if "chap" in hash_num.keys():
             type_info = "SHOW"
-            hash_num["season"]=num[0]
-            hash_num["episode"]=num[1]
         else:
-            type_info = "MANGA"
-            hash_num["chap"] = num[0]
+            type_info = "MANGA"         
         bool_num = True
+
     if o[0] == "-s":       
         summary = optlist[i][1]
         bool_sum = True
