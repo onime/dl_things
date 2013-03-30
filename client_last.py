@@ -4,6 +4,7 @@
 
 import shutil
 from easylast import *
+from easysummary import *
 from getopt import *
 import sys
 
@@ -24,7 +25,7 @@ def usage():
 
 args = sys.argv[1:]
 try:
-    optlist,value = getopt(args, 'a:x:u:n:i:hprs',['DL','VU'])  
+    optlist,value = getopt(args, 'z:x:n:hps',['DL','VU','ar','fr','add','upd','inc','del','save','restore'])  
 except GetoptError as err:
     print(err)
     usage()
@@ -35,18 +36,17 @@ if "--VU" in args:
 else:
     bd = "DL"
 
-if "-a" in args or "-a" in args:
-    if "-n" not in args:
-        print("Erreur : -a ou -u doit renseigner un numéro de saison ou un chapitre")
-        usage()
-        sys.exit(2)
+bool_num = False
+bool_name = False
+bool_sum = False
+bool_type = False
 
 for i,o in enumerate(optlist):
     if o[0] == "-h":
         usage()
         exit(0)
 
-    if o[0] == "-r":
+    if o[0] == "--restore":
         file_dump = open("/home/yosholo/.config/utils/dump_bd_last_seen."+bd,"r")
         lines = file_dump.readlines()
         for line in lines:
@@ -57,7 +57,7 @@ for i,o in enumerate(optlist):
                 add_manga(elem[0],elem[1],bd)
             file_dump.close()
         exit(0)
-    if o[0] == "-s":
+    if o[0] == "--save":
         file_dump = open("/home/yosholo/.config/utils/dump_bd_last_seen."+bd,"w")
         infos=infos_last("*","MANGA",bd)
         new_str = []
@@ -72,12 +72,7 @@ for i,o in enumerate(optlist):
         file_dump.write(s)
         file_dump.close()
         exit(0)
-    if o[0] == "-i":
-        incr_last(o[1],bd)
-        exit(0)
-    if o[0] == "-x":
-        suppr_info(o[1],bd)
-        exit(0)
+  
     if o[0] == "-p":
         print(bd)
         print("--"*5)
@@ -85,26 +80,70 @@ for i,o in enumerate(optlist):
         print("--"*5)
         print(infos_last("MANGA",".",bd))
         exit(0)
-    if o[0] == "-a":
-        num = parse_regex(re.search(regex_infos,optlist[i+1][1],re.IGNORECASE))
-
-        if len(num) > 1: 
-            add_show(o[1],num[0],num[1],bd)
-        else:
-            add_manga(o[1],num[0],bd)
-        exit(0)
-    if o[0] == "-u":
-        num = parse_regex(re.search(regex_infos,optlist[i+1][1],re.IGNORECASE))
+  
+    if o[0] == "-n":
         hash_num = {}
+        num = parse_regex(re.search(regex_infos,optlist[i][1],re.IGNORECASE))
         if len(num) > 1:
+            type_info = "SHOW"
             hash_num["season"]=num[0]
             hash_num["episode"]=num[1]
-
         else:
+            type_info = "MANGA"
             hash_num["chap"] = num[0]
-        upd_last(o[1],hash_num,bd)
+        bool_num = True
+    if o[0] == "-s":       
+        summary = optlist[i][1]
+        bool_sum = True
+       
+    if o[0] == "-z":
+        name = optlist[i][1]
+        bool_name = True
+
+for i,o in enumerate(optlist):
+    if o[0] == "--inc":
+        if bool_name == True:
+            incr_last(o[1],bd)
         exit(0)
 
+    if o[0] == "--del":
+        if bool_name == True:
+            suppr_info(o[1],bd)
+        exit(0)
 
+    if o[0] == "--add":
+        if bool_num == True and bool_name == True:
+            add_manga(o[1],hash_num,bd)
+        if bool_sum == True:
+             doc = {"type":type_info,"name":name,"summary":summary,"num":hash_num}
+             add_summary(doc)
+        exit(0)
 
+    if o[0] == "--upd":
+        if bool_num == True and bool_name == True:
+            upd_last(o[1],hash_num,bd)
+        if bool_sum == True:
+             doc = {"type":type_info,"name":name,"summary":summary,"num":hash_num}
+             add_summary(doc)
+             exit(0)
 
+    if o[0] == "--ar":
+        if bool_num == True and bool_name == True and  bool_sum == True:
+            doc = {"type":type_info,"name":name,"summary":summary,"num":hash_num}
+            add_summary(doc)
+    
+    if o[0] == "--fr":
+        doc = {}
+        if bool_type == True:
+            doc["type"]=type_info
+        if bool_num == True:
+            doc["num"]=hash_num
+        if bool_sum == True:
+            doc["summary"] = {'$regex': summary,'$options' :'i'}
+        if bool_name == True:
+            doc["name"] = {'$regex': name,'$options' :'i'}
+    
+        res = find_summary(doc)
+        for doc in res:
+            print(doc)
+    

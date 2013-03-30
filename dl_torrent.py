@@ -66,7 +66,8 @@ for i in items:
                         
                         if maj == True:
                             maj == False
-                            subprocess.getoutput("/usr/local/bin/client_last -u "+name_dir_show+" -n "+num_season_cur+"x"+num_episode_cur)
+                            upd_last(name_dir_show,{"season":num_seasoncur,"episode":num_episode_cur},"DL")
+
                         notify2.init("Torrent Téléchargé")
                         notif = notify2.Notification(name_file)
                         notif.show()

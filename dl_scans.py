@@ -98,4 +98,5 @@ for k in hash_scan:
     hash_scan[k] = sorted(hash_scan[k])
     print("maj")
     for num in hash_scan[k]:
-        subprocess.getoutput("/usr/local/bin/client_last -u "+k+" -n "+num)
+        upd_last(k,{"chap":num},"DL")
+
