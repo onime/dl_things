@@ -85,6 +85,7 @@ for i,o in enumerate(optlist):
         hash_num = {}
         num = parse_regex(re.search(regex_infos,optlist[i][1],re.IGNORECASE))
         if len(num) > 1:
+            print("fuck")
             type_info = "SHOW"
             hash_num["season"]=num[0]
             hash_num["episode"]=num[1]
@@ -103,17 +104,17 @@ for i,o in enumerate(optlist):
 for i,o in enumerate(optlist):
     if o[0] == "--inc":
         if bool_name == True:
-            incr_last(o[1],bd)
+            incr_last(name,bd)
         exit(0)
 
     if o[0] == "--del":
         if bool_name == True:
-            suppr_info(o[1],bd)
+            suppr_info(name,bd)
         exit(0)
 
     if o[0] == "--add":
         if bool_num == True and bool_name == True:
-            add_manga(o[1],hash_num,bd)
+            add_manga(name,hash_num,bd)
         if bool_sum == True:
              doc = {"type":type_info,"name":name,"summary":summary,"num":hash_num}
              add_summary(doc)
@@ -121,7 +122,8 @@ for i,o in enumerate(optlist):
 
     if o[0] == "--upd":
         if bool_num == True and bool_name == True:
-            upd_last(o[1],hash_num,bd)
+            upd_last(name,hash_num,bd)
+
         if bool_sum == True:
              doc = {"type":type_info,"name":name,"summary":summary,"num":hash_num}
              add_summary(doc)
