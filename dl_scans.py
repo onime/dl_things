@@ -36,12 +36,13 @@ def dl_images_of_a_scan(list_url,path_dirs):
         img = tree_page_img.xpath("//img[@id='p']")
 
         link_img = img[0].attrib["src"]
-
-#On définit le bon path avec la bonne extension    
-        name_page = format_number_zero([count])[0] + os.path.splitext(link_img)[1]
+        
+        #On définit le bon path avec la bonne extension    
+        name_page = str(format_number_zero({"page":int(count)})["page"]) + os.path.splitext(link_img)[1]
+        
         path_file = path_dirs+"/"+ name_page
                 
-#On la télécharge 
+        #On la télécharge 
         urlretrieve(link_img,path_file)
         count+=1
 
@@ -66,7 +67,7 @@ for i in items:
 #Parmi les mangas présent on ne prend que ceux présent dans la liste
     for info_scan in list_scan:
         if re.search("("+info_scan["name"]+")",title,re.IGNORECASE):
-            num_scan_dl = parse_regex(re.search(regex_infos,title,re.IGNORECASE))[0]
+            num_scan_dl = parse_regex(re.search(regex_infos,title,re.IGNORECASE))["chap"]
                           
             if int(num_scan_dl) > int(info_scan["num"]["chap"]):
                 
