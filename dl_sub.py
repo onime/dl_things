@@ -58,7 +58,7 @@ for show in last_sub:
                 version = str(infos[4].text)
                 link_srt = infos[9].getchildren()[0].attrib["href"]
                 
-                if  (re.search("^Complete",is_complete,re.IGNORECASE) and re.search("^LOL|EVOLVE|ASAP|WEB-DL|IMMERSE|PROPOER",version) and
+                if  (re.search("^Complete",is_complete,re.IGNORECASE) and re.search("^LOL|EVOLVE|ASAP|WEB-DL|IMMERSE|PROPER",version) and
                      re.search("French",lang,re.IGNORECASE) and int(num_episode_line) >= int(last_num_episode)):
                     print(link_srt)
                     if str(num_episode_line) not in list_download_sub.keys():
