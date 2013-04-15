@@ -39,7 +39,7 @@ def usage():
 
 args = sys.argv[1:]
 try:
-    optlist,value = getopt(args, 't:n:hps',['DL','VU','as','fs','add','upd','inc','del','save','restore'])  
+    optlist,value = getopt(args, 't:n:phs',['DL','VU','as','fs','add','upd','inc','del','save','restore'])  
 except GetoptError as err:
     print(err)
     usage()
@@ -70,22 +70,33 @@ for i,o in enumerate(optlist):
     if o[0] == "-p":
         print(bd)
         print("--"*5)
-        info_shows = infos_last("SHOW",".",bd)
-        names = [(i["name"],i) for i in info_shows]
-        names.sort()
-        show_sort = [i for (_,i) in names]
+        
+        if len(args) > i + 1 != '':
+            infos = infos_last("SHOW",".",bd) + infos_last("MANGA",".",bd)
+            for s in infos:
+                if re.search(args[i+1],s["name"],re.IGNORECASE):
+                    if is_show(s):
+                        print(format_name(s["name"],".")+" ===> "+format_SXXEXX(s["num"]))
+                    else:
+                        print(format_name(s["name"],".")+" ===> "+str(s["num"]["chap"]))
 
-        for s in show_sort:
-            print(format_name(s["name"],".")+" ===> "+format_SXXEXX(s["num"]))
+        else:
+            info_shows = infos_last("SHOW",".",bd)
+            names = [(i["name"],i) for i in info_shows]
+            names.sort()
+            show_sort = [i for (_,i) in names]
+
+            for s in show_sort:
+                print(format_name(s["name"],".")+" ===> "+format_SXXEXX(s["num"]))
             
-        print("--"*5)
-        info_manga = infos_last("MANGA",".",bd)
-        names = [(i["name"],i) for i in info_manga]
-        names.sort()
-        manga_sort = [i for (_,i) in names]
+            print("--"*5)
+            info_manga = infos_last("MANGA",".",bd)
+            names = [(i["name"],i) for i in info_manga]
+            names.sort()
+            manga_sort = [i for (_,i) in names]
 
-        for m in manga_sort:
-            print(format_name(m["name"],".")+" ===> "+str(m["num"]["chap"]))
+            for m in manga_sort:
+                print(format_name(m["name"],".")+" ===> "+str(m["num"]["chap"]))
 
         exit(0)
   
