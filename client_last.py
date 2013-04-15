@@ -8,24 +8,38 @@ from easysummary import *
 from getopt import *
 import sys
 
-#arg dl ou vu 
-#    et presque comme le reste sur last seen sauf peut etre pour le num  dépisode S0xEyz ou XxYZ
-
 def usage():
 
     print("Usage :")
-    print("\t -a name (fonctionne avec -n) ")
-    print("\t -x name (supprime name dans la bd) ")
-    print("\t -u name (fonctionne avec -n) ")
+    print( "CMD")
+    print( "\t --add add an information in the file")
+    print( "\t --upd update the information given in parameter")
+    print( "\t --del delete the information given in the parameter")
+    print( "\t --inc increment the information given in the parameter")
+    print( "\t --save save the data in a backup  file")
+    print( "\t --restore restore the backup file")
+    print(" \t --as add a summary to the INFO given")
+    print(" \t --fs find a summary from the INFO or search from the keywords")
+    
+    print("TYPE")
+    print("specify the file to look for")
+    print("\t --DL information about the last download")
+    print("\t --VU information about the last seen")
+    
+    print("INFO")
+
+    print("\t -t the title of the show or manga")
     print("\t -n SwxEyz|XxYZ|XYZ (on ajoute une série ou un manga ex: -n S03E04 ou 3x04) ")
-    print("\t -i name (incrémente le name dans la bd)")
-    print("\t -s (save the bd in a file) ")
-    print("\t -r (restore the file in the bd) ")
-    print("\t -p (print the infos) ")
+    print("\t -s indicate the summary to add or to look for")
+    print("\t -p print the infos ")
+    print("\t -h print this help" )
+
+    print("\n\n Exemple")
+    print("client_last --add --DL -t game.of.thrones -n s03e03")
 
 args = sys.argv[1:]
 try:
-    optlist,value = getopt(args, 'z:x:n:hps',['DL','VU','ar','fr','add','upd','inc','del','save','restore'])  
+    optlist,value = getopt(args, 't:n:hps',['DL','VU','as','fs','add','upd','inc','del','save','restore'])  
 except GetoptError as err:
     print(err)
     usage()
@@ -78,16 +92,17 @@ for i,o in enumerate(optlist):
     if o[0] == "-n":
         hash_num = parse_regex(re.search(regex_infos,optlist[i][1],re.IGNORECASE))
         if "chap" in hash_num.keys():
-            type_info = "SHOW"
+            type_info = "MANGA"
         else:
-            type_info = "MANGA"         
+            type_info = "SHOW"
+     
         bool_num = True
 
     if o[0] == "-s":       
         summary = optlist[i][1]
         bool_sum = True
        
-    if o[0] == "-z":
+    if o[0] == "-t":
         name = optlist[i][1]
         bool_name = True
 
@@ -104,7 +119,11 @@ for i,o in enumerate(optlist):
 
     if o[0] == "--add":
         if bool_num == True and bool_name == True:
-            add_manga(name,hash_num,bd)
+            if is_manga({"type":type_info}):
+                add_manga(name,hash_num,bd)
+            else:
+                add_show(name,hash_num,bd)
+
         if bool_sum == True:
              doc = {"type":type_info,"name":name,"summary":summary,"num":hash_num}
              add_summary(doc)
@@ -119,12 +138,12 @@ for i,o in enumerate(optlist):
              add_summary(doc)
              exit(0)
 
-    if o[0] == "--ar":
+    if o[0] == "--as":
         if bool_num == True and bool_name == True and  bool_sum == True:
             doc = {"type":type_info,"name":name,"summary":summary,"num":hash_num}
             add_summary(doc)
     
-    if o[0] == "--fr":
+    if o[0] == "--fs":
         doc = {}
         if bool_type == True:
             doc["type"]=type_info
