@@ -50,16 +50,29 @@ for i,o in enumerate(optlist):
         shutil.copyfile(path_file_info+"."+bd+".bak",path_file_info+"."+bd)
         exit(0)
     if o[0] == "--save":
-        shutil.copyfile(path_file_info+"."+bd,path_file_info+"."+bd+".bak")
-        
+        shutil.copyfile(path_file_info+"."+bd,path_file_info+"."+bd+".bak")        
         exit(0)
   
     if o[0] == "-p":
         print(bd)
         print("--"*5)
-        print(infos_last("SHOW",".",bd))
+        info_shows = infos_last("SHOW",".",bd)
+        names = [(i["name"],i) for i in info_shows]
+        names.sort()
+        show_sort = [i for (_,i) in names]
+
+        for s in show_sort:
+            print(format_name(s["name"],".")+" ===> "+format_SXXEXX(s["num"]))
+            
         print("--"*5)
-        print(infos_last("MANGA",".",bd))
+        info_manga = infos_last("MANGA",".",bd)
+        names = [(i["name"],i) for i in info_manga]
+        names.sort()
+        manga_sort = [i for (_,i) in names]
+
+        for m in manga_sort:
+            print(format_name(m["name"],".")+" ===> "+str(m["num"]["chap"]))
+
         exit(0)
   
     if o[0] == "-n":
