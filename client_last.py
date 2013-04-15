@@ -47,30 +47,11 @@ for i,o in enumerate(optlist):
         exit(0)
 
     if o[0] == "--restore":
-        file_dump = open("/home/yosholo/.config/utils/dump_bd_last_seen."+bd,"r")
-        lines = file_dump.readlines()
-        for line in lines:
-            elem = line.split(",")
-            if int(elem[1]) == 0:
-                add_show(elem[0],elem[2],elem[3],bd)
-            else:
-                add_manga(elem[0],elem[1],bd)
-            file_dump.close()
+        shutil.copyfile(path_file_info+"."+bd+".bak",path_file_info+"."+bd)
         exit(0)
     if o[0] == "--save":
-        file_dump = open("/home/yosholo/.config/utils/dump_bd_last_seen."+bd,"w")
-        infos=infos_last("*","MANGA",bd)
-        new_str = []
-        for i in infos:
-            new_str.append(",".join([str(x) for x in i]))
-        infos=infos_last("*","SHOW",bd)
-        new_str = []
-        for i in infos:
-            new_str.append(",".join([str(x) for x in i]))
-
-        s = "\n".join([ str(info) for info in new_str])
-        file_dump.write(s)
-        file_dump.close()
+        shutil.copyfile(path_file_info+"."+bd,path_file_info+"."+bd+".bak")
+        
         exit(0)
   
     if o[0] == "-p":
