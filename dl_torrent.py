@@ -9,6 +9,7 @@ import re
 import socket
 from urllib.request import urlopen
 from urllib.parse import unquote
+from urllib import error
 import notify2
 from easylast import *
 import subprocess
@@ -40,7 +41,7 @@ for i in items:
             tree_ep_show = parse_url(str(base_url+link_ep_show))
             names_episodes = tree_ep_show.xpath("//a[@class='epinfo']")
             links_torrents = tree_ep_show.xpath("//a[@class='download_1']")
-            
+            links_torrents_2 = tree_ep_show.xpath("//a[@class='download_2']")
             #on parcour la liste des épisodes
             count = 0
            
@@ -59,10 +60,16 @@ for i in items:
                 
                         name_file = name_dir_show+"."+format_SXXEXX(num_cur)+".torrent"
                         path_torrent = path_dir+name_file
-                        
+                                                
                         print(unquote(links_torrents[count].attrib["href"]))
-                        urlretrieve(links_torrents[count].attrib["href"],path_torrent)
                         
+                        try:
+                            urlretrieve(links_torrents[count].attrib["href"],path_torrent)
+                        except error.HTTPError:
+                            print("fails")
+                            print(unquote(links_torrents_2[count].attrib["href"]))
+                            urlretrieve(links_torrents_2[count].attrib["href"],path_torrent)
+
                         if maj == True:
                             maj == False
                             upd_last(name_dir_show,num_cur,"DL")
