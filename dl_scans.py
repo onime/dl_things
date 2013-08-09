@@ -7,6 +7,7 @@ from urllib.request import urlretrieve
 from easylast import *
 import re
 import os
+import sys
 import notify2
 import subprocess
 
@@ -46,29 +47,86 @@ def dl_images_of_a_scan(list_url,path_dirs):
         urlretrieve(link_img,path_file)
         count+=1
 
-    print("")
+def dl_page_one_manga(name,num,page):
+    
+    base_url = "http://www.onemanga.me/"+name_one_manga[name]+"/"+str(num)+"/"+str(page)
+    tree = parse_url(base_url,"html")
+    item_img = tree.xpath("//img[@class='manga-page']")
+    url_img = item_img[0].attrib["src"]
+    path_img = "/media/Data/Scans/"+format_name(name,' ')+"/"+str(num)
+    
+    if not os.path.exists(path_img):
+        os.makedirs(path_img)
+    try :
+        urlretrieve(url_img,path_img+"/"+str(format_number_zero({"page":int(page)})["page"]))
+    except OSError as Err:
+        fail_load.append([name,num,page,url_img])
 
+def dl_one_manga(name,num):
+    #the name given for the directory's name
+    base_url = "http://www.onemanga.me/"+name_one_manga[name]+"/"+str(num)
+    tree = parse_url(base_url,"html")
+
+    try:
+        items_nb_page = tree.xpath("//li/select[@class='cbo_wpm_pag']")[0]
+        print("\t\tDownload",name,num)
+        for n in items_nb_page:
+            dl_page_one_manga(name,num,int(n.text))
+    except:
+        print("\t\t",name,num,"no available")
+
+    #there is two select one at the top of the image and one at the bottom but i need only one
+    
+   
+        
+name_one_manga={"naruto":"naruto_manga","bleach":"bleach","claymore":"claymore","fairy tail":"Fairy_Tail","one piece":"One_Piece"}
+fail_load = []
 
 list_scan = infos_last("MANGA"," ","DL")
-file_rss = "http://feeds.feedburner.com/mstream"
-basename = "http://mangastream.com/"
 
-path_dirs = "/media/Data/Scans/"
+if len(sys.argv) > 1:
+    if(sys.argv[1] == "--missing"):
+        
+        for scan in list_scan:
+            
+            str_num_chaps = os.listdir("/media/Data/Scans/"+format_name(scan['name']," "))
+            num_chaps = [int(n) for n in str_num_chaps if n.isdigit()]
+            num_chaps = sorted(num_chaps)
+            
+            count = 1
+            print(name_one_manga[scan['name']])
 
-#parse le fichier xml
-tree = parse_url(file_rss,"xml")
-items = tree.xpath('//item')
-hash_scan = {} 
+            for n in num_chaps:
+                if count != n:
+                    print("\tDownload",count,n-1)
+                    for i in range(count,n):
+                        dl_one_manga(scan['name'],i)
+                        
+                    count = n
+                count+=1
 
-for i in items:
-    childs = i.getchildren()  
-    title = childs[0].text
+        print(fail_load)
+else:
 
-#Parmi les mangas présent on ne prend que ceux présent dans la liste
+    file_rss = "http://feeds.feedburner.com/mstream"
+    basename = "http://mangastream.com/"
+    
+    path_dirs = "/media/Data/Scans/"
+    
+    #parse le fichier xml
+    tree = parse_url(file_rss,"xml")
+    items = tree.xpath('//item')
+    hash_scan = {} 
+
+    for i in items:
+        childs = i.getchildren()  
+        title = childs[0].text
+
+    #Parmi les mangas présent on ne prend que ceux présent dans la liste
     for info_scan in list_scan:
         if re.search("("+info_scan["name"]+")",title,re.IGNORECASE):
             num_scan_dl = parse_regex(re.search(regex_infos,title,re.IGNORECASE))["chap"]
-                          
+        
             if int(num_scan_dl) > int(info_scan["num"]["chap"]):
                 
                 name_dir_scan = format_name(info_scan["name"],' ')
@@ -95,9 +153,9 @@ for i in items:
                 notif = notify2.Notification(name_dir_scan+" "+num_scan_dl+" "+str(len(list_link_scan))+" pages")
                 notif.show()
                 
-for k in hash_scan:
-    hash_scan[k] = sorted(hash_scan[k])
-    print("maj")
-    for num in hash_scan[k]:
-        upd_last(k,{"chap":num},"DL")
+    for k in hash_scan:
+        hash_scan[k] = sorted(hash_scan[k])
+        print("maj")
+        for num in hash_scan[k]:
+            upd_last(k,{"chap":num},"DL")
 
