@@ -63,6 +63,7 @@ def om_dl_scan(name,num):
     items_nb_page = tree.xpath("//li/select[@class='cbo_wpm_pag']")[0]
     nb_pages = len(items_nb_page)
     
+    print("[OM]")
     print("Download ",format_name(name," "),num,nb_pages)
     for n in items_nb_page:
         om_dl_page(name,num,int(n.text))
@@ -155,6 +156,7 @@ for item in list_scan_out:
         if not os.path.exists(path_dirs_scan):
             os.makedirs(path_dirs_scan)
 
+        print("[MS]")
         print(" Downlading "+name_dir_scan+" "+item["num"]+" "+str(len(list_link_scan))+" pages ")
 
         ms_dl_images(list_link_scan,path_dirs_scan)
