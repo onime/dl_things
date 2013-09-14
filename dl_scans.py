@@ -28,8 +28,8 @@ def ms_get_links_pages(link_scan,num_scan):
 
     while int(num_scan_page) == int(num_scan):
         tree_page_princ = parse_url(link_scan)
-        num_scan_page = tree_page_princ.xpath("//title")[0].text.split(" ")[2]
-
+        num_scan_page = parse_regex(re.search(regex_infos,tree_page_princ.xpath("//title")[0].text))["chap"]
+               
         balise_next = tree_page_princ.xpath("//div[@class='page']")[0]
 
         link_scan = balise_next.find('a').get("href")
