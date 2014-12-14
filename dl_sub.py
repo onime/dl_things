@@ -21,7 +21,15 @@ for dir_show in dirs_show:
             if re.search(show["name"].replace(" ","."),dir_show,re.IGNORECASE):
                 list_srt = sorted([x.lower() for x in glob.glob(dir_show+"/Saison."+str(show["num"]["season"])+"/*.srt")])
                 if list_srt:
-                    str_ep_sub = re.match(".*S[0-9]+E([0-9]+)\.",list_srt[-1],re.IGNORECASE).group(1)
+                    print(list_srt[-1])
+
+                    match = re.match(".*S[0-9]+E([0-9]+)\.",list_srt[-1],re.IGNORECASE)
+                    if match == None:
+                        match = re.match(".*[0-9]+x([0-9]+).*",list_srt[-1],re.IGNORECASE)
+
+                    str_ep_sub = match.group(1)
+
+                    print(str_ep_sub)
                     last_sub.append([show["name"],show["num"]["season"],int(str_ep_sub)+1,dir_show])
                 else:
                     last_sub.append([show["name"],show["num"]["season"],0,dir_show])
