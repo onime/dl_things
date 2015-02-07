@@ -1,14 +1,14 @@
 
 
 install:
-	cp man/client_last.1 /usr/share/man/man1/
-	cp client_last.py /usr/local/bin/client_last
+	cp man/whatsnews.1 /usr/share/man/man1/
+	cp whatsnews.py /usr/local/bin/whatsnews
 	cp dl_scans.py /usr/local/bin/dl_scans	
 	cp dl_torrent.py /usr/local/bin/dl_torrent
 	cp dl_sub.py /usr/local/bin/dl_sub
 
-client_last:
-	cp client_last.py /usr/local/bin/client_last
+whatsnews:
+	cp whatsnews.py /usr/local/bin/whatsnews
 
 dl_scans:
 	cp dl_scans.py /usr/local/bin/dl_scans

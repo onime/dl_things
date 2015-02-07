@@ -135,12 +135,12 @@ for i,o in enumerate(optlist):
             incr_last(name,bd)
         exit(0)
 
-    if o[0] == "--del":
+    elif o[0] == "--del":
         if bool_name == True:
             suppr_info(name,bd)
         exit(0)
 
-    if o[0] == "--add":
+    elif o[0] == "--add":
         if bool_num == True and bool_name == True:
             if is_manga({"type":type_info}):
                 add_manga(name,hash_num,bd)
@@ -152,21 +152,24 @@ for i,o in enumerate(optlist):
              add_summary(doc)
         exit(0)
 
-    if o[0] == "--upd":
+    elif o[0] == "--upd":
         if bool_num == True and bool_name == True:
             upd_last(name,hash_num,bd)
+        else:
+            print("missing arguments -t or -n")
+            exit(1)
 
         if bool_sum == True:
              doc = {"type":type_info,"name":name,"summary":summary,"num":hash_num}
              add_summary(doc)
              exit(0)
 
-    if o[0] == "--as":
+    elif o[0] == "--as":
         if bool_num == True and bool_name == True and  bool_sum == True:
             doc = {"type":type_info,"name":name,"summary":summary,"num":hash_num}
             add_summary(doc)
     
-    if o[0] == "--fs":
+    elif o[0] == "--fs":
         doc = {}
         if bool_type == True:
             doc["type"]=type_info
